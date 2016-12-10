@@ -893,6 +893,21 @@ static int b64decode_ecdsa_privatekey(const char *pkey, gcry_sexp_t *r,
 }
 #endif
 
+ssh_key pki_import_raw_key(gcry_sexp_t raw_key, int type)
+{
+    ssh_key key;
+
+    key = ssh_key_new();
+    if (key == NULL)
+        return NULL;
+    key->type = type;
+    key->type_c = ssh_key_type_to_char(type);
+    key->flags = SSH_KEY_FLAG_PRIVATE | SSH_KEY_FLAG_PUBLIC;
+    key->rsa = raw_key;
+
+    return key;
+}
+
 ssh_string pki_private_key_to_pem(const ssh_key key,
                                   const char *passphrase,
                                   ssh_auth_callback auth_fn,

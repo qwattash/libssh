@@ -568,6 +568,9 @@ LIBSSH_API int ssh_key_cmp(const ssh_key k1,
 
 LIBSSH_API int ssh_pki_generate(enum ssh_keytypes_e type, int parameter,
         ssh_key *pkey);
+
+LIBSSH_API int ssh_pki_import_raw(void *raw_key, ssh_key *pkey, int type);
+
 LIBSSH_API int ssh_pki_import_privkey_base64(const char *b64_key,
                                              const char *passphrase,
                                              ssh_auth_callback auth_fn,

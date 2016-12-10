@@ -627,6 +627,14 @@ int pki_key_compare(const ssh_key k1,
     return 0;
 }
 
+ssh_key pki_import_raw_key(void *raw_key, int type)
+{
+    /* unimplemented */
+    (void) raw_key;
+    (void) type;
+    return NULL;
+}
+
 ssh_string pki_private_key_to_pem(const ssh_key key,
                                   const char *passphrase,
                                   ssh_auth_callback auth_fn,

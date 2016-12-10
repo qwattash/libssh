@@ -391,6 +391,26 @@ void ssh_signature_free(ssh_signature sig)
 }
 
 /**
+ * @brief import a raw key structure from gcrypt or openssl
+ *
+ * @param[in] raw_key  The raw key structure to import
+ * @param[out] pkey A pointer where the allocated key can be stored.
+ * You need to free the memory.
+ * @return SSH_ERROR in case of error, SSH_OK otherwise.
+ */
+int ssh_pki_import_raw(void *raw_key, ssh_key *pkey, int type) 
+{
+    ssh_key key;
+
+    key = pki_import_raw_key(raw_key, type);
+    *pkey = key;
+    if (key == NULL)
+        return SSH_ERROR;
+    return SSH_OK;
+}
+
+
+/**
  * @brief import a base64 formated key from a memory c-string
  *
  * @param[in]  b64_key  The c-string holding the base64 encoded key

@@ -21,6 +21,12 @@
 #ifndef PKI_PRIV_H_
 #define PKI_PRIV_H_
 
+#include "config.h"
+
+#ifdef HAVE_LIBGCRYPT
+//#include <gcrypt.h>
+#endif 
+
 #include "libssh/pki.h"
 
 /* defined in bcrypt_pbkdf.c */
@@ -56,6 +62,12 @@ int pki_key_generate_ed25519(ssh_key key);
 int pki_key_compare(const ssh_key k1,
                     const ssh_key k2,
                     enum ssh_keycmp_e what);
+
+#ifdef HAVE_LIBGCRYPT
+ssh_key pki_import_raw_key(gcry_sexp_t raw_key, int type);
+#else
+ssh_key pki_import_raw_key(void *raw_key, int type);
+#endif
 
 /* SSH Private Key Functions */
 enum ssh_keytypes_e pki_privatekey_type_from_string(const char *privkey);
