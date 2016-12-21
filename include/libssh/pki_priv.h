@@ -22,11 +22,6 @@
 #define PKI_PRIV_H_
 
 #include "config.h"
-
-#ifdef HAVE_LIBGCRYPT
-//#include <gcrypt.h>
-#endif 
-
 #include "libssh/pki.h"
 
 /* defined in bcrypt_pbkdf.c */
