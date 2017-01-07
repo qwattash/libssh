@@ -902,6 +902,7 @@ ssh_key pki_import_raw_key(gcry_sexp_t raw_key, int type)
         return NULL;
     key->type = type;
     key->type_c = ssh_key_type_to_char(type);
+    /* XXX this is not true, need to check the S-exp */
     key->flags = SSH_KEY_FLAG_PRIVATE | SSH_KEY_FLAG_PUBLIC;
     key->rsa = raw_key;
 
