@@ -896,16 +896,44 @@ static int b64decode_ecdsa_privatekey(const char *pkey, gcry_sexp_t *r,
 ssh_key pki_import_raw_key(gcry_sexp_t raw_key, int type)
 {
     ssh_key key;
+    gcry_sexp_t tmp;
 
     key = ssh_key_new();
     if (key == NULL)
         return NULL;
     key->type = type;
     key->type_c = ssh_key_type_to_char(type);
-    /* XXX this is not true, need to check the S-exp */
-    key->flags = SSH_KEY_FLAG_PRIVATE | SSH_KEY_FLAG_PUBLIC;
-    key->rsa = raw_key;
-
+    key->flags = 0;
+    if ((tmp = gcry_sexp_find_token(raw_key, "public-key", 0)) != NULL) {
+        key->flags |= SSH_KEY_FLAG_PUBLIC;
+        gcry_sexp_release(tmp);
+    }
+    if ((tmp = gcry_sexp_find_token(raw_key, "private-key", 0)) != NULL) {
+        key->flags |= SSH_KEY_FLAG_PRIVATE;
+        gcry_sexp_release(tmp);
+    }
+    /* create a copy of the input S-exp */
+    tmp = gcry_sexp_nth(raw_key, 0);
+    switch (type) {
+        case SSH_KEYTYPE_DSS:
+            key->dsa = tmp;            
+            break;
+        case SSH_KEYTYPE_RSA:
+        case SSH_KEYTYPE_RSA1:
+            key->rsa = tmp;            
+            break;
+        case SSH_KEYTYPE_ECDSA:
+#if HAVE_GCRYPT_ECC
+            key->ecdsa = tmp;
+            break;
+#endif
+        case SSH_KEYTYPE_ED25519:
+		/* Cannot open ed25519 keys with libgcrypt */
+        case SSH_KEYTYPE_UNKNOWN:
+        default:
+            SSH_LOG(SSH_LOG_WARN, "Unkown or invalid private key type %d", type);
+            return NULL;
+    }
     return key;
 }
 
